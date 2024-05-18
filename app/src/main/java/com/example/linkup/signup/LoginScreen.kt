@@ -41,7 +41,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.linkup.navigation.Screen1
+import com.example.linkup.navigation.Screen
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -164,7 +164,7 @@ fun LoginScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen1.Home.route)
+                navController.navigate(Screen.Home.route)
                 scope.launch {
                     viewModel.loginUser(
                         AuthUser(

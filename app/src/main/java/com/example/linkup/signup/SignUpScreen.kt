@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.linkup.data.remote.MainViewModel
 import com.example.linkup.data.remote.Repository
-import com.example.linkup.navigation.Screen1
+import com.example.linkup.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.database.database
@@ -204,7 +204,7 @@ fun SignUpScreen(navController: NavController) {
         Button(
             onClick = {
 
-                navController.navigate(Screen1.Home.route)
+                navController.navigate(Screen.Home.route)
                 val user = com.example.linkup.User(null, name, email, password, "male", "pk")
                 viewModel.storeData(user, userId)
                 val sharedPreferences = context.getSharedPreferences("Linkup",Context.MODE_PRIVATE)

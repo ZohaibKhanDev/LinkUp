@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.linkup.R
-import com.example.linkup.navigation.Screen1
+import com.example.linkup.navigation.Screen
 
 @Composable
 fun AuthScreen(navController: NavController) {
@@ -40,8 +40,8 @@ fun AuthScreen(navController: NavController) {
 
     LaunchedEffect(key1 = Unit) {
         if (sharedUserId != null) {
-            navController.navigate(Screen1.Home.route) {
-                popUpTo(Screen1.Home.route) { inclusive = true }
+            navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Home.route) { inclusive = true }
             }
         }
     }
@@ -73,7 +73,7 @@ fun AuthScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(40.dp))
 
         Button(
-            onClick = { navController.navigate(Screen1.signup.route) },
+            onClick = { navController.navigate(Screen.signup.route) },
             modifier = Modifier
                 .width(273.dp)
                 .height(50.dp), shape = RoundedCornerShape(5.dp)
@@ -85,7 +85,7 @@ fun AuthScreen(navController: NavController) {
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Screen1.login.route)
+                navController.navigate(Screen.login.route)
             },
             modifier = Modifier
                 .width(273.dp)
