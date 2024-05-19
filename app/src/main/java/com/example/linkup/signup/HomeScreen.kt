@@ -107,7 +107,7 @@ fun HomeScreen(navController: NavController, sharedUserId: String?) {
                 .fillMaxWidth()
                 .padding(top = it.calculateTopPadding(), start = 10.dp, end = 10.dp)
         ) {
-            items(users) { user ->
+            items(filteredUsers) { user ->
                 UserCard(user, navController)
             }
         }

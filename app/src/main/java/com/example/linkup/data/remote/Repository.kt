@@ -31,8 +31,8 @@ class Repository(private val dbRef: DatabaseReference) : FirebaseService {
 
     override suspend fun writeUserMessage(message: Message, userId: String): String {
         val isSuccessful = mutableStateOf("")
-        val messRef = dbRef.database.getReference("Message")
-        messRef.child("chat$userId").child(userId).setValue(message).addOnSuccessListener {
+        val messRef = dbRef.database.getReference().child("Message").child("chat").child(userId).push()
+        messRef.setValue(message).addOnSuccessListener {
             isSuccessful.value = "User Data Stored Successfully"
         }.addOnFailureListener {
             isSuccessful.value = "${it.message}"

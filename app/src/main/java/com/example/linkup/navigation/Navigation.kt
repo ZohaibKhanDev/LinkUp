@@ -37,7 +37,7 @@ fun Navigation(navController: NavHostController) {
         }
     }
 
-    NavHost(navController = navController, startDestination = destination) {
+    NavHost(navController = navController, startDestination =destination) {
         composable(Screen.Main.route) {
             AuthScreen(navController)
         }

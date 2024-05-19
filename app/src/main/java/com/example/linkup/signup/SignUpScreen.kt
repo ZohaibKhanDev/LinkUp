@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.linkup.chatdetail.ChatContent
 import com.example.linkup.data.remote.MainViewModel
 import com.example.linkup.data.remote.Repository
 import com.example.linkup.navigation.Screen
@@ -63,6 +64,7 @@ fun SignUpScreen(navController: NavController) {
     }
     val userId = Firebase.auth.currentUser?.uid ?: ""
 
+    println("CURRENT:$userId")
 
     var name by remember {
         mutableStateOf("")
@@ -203,9 +205,8 @@ fun SignUpScreen(navController: NavController) {
 
         Button(
             onClick = {
-
                 navController.navigate(Screen.Chat.route)
-                val user = com.example.linkup.User(null, name, email, password, "male", "pk")
+                val user = com.example.linkup.User(userId, name, email, password, "male", "pk")
                 viewModel.storeData(user, userId)
                 val sharedPreferences = context.getSharedPreferences("Linkup",Context.MODE_PRIVATE)
                 sharedPreferences.edit().putString("userId",userId).apply()

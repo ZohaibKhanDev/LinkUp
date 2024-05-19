@@ -18,10 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +55,7 @@ class ChatDetail : ComponentActivity() {
                 val currentDateTime: String =
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 val userId = Firebase.auth.currentUser?.uid
-                val messRef = Firebase.database.getReference("Message")
+                val messRef = Firebase.database.getReference("Message").child("chat")
                 val repository = remember { Repository(messRef) }
                 val viewModel = remember { MainViewModel(repository) }
                 var message by remember { mutableStateOf("") }
@@ -61,6 +63,7 @@ class ChatDetail : ComponentActivity() {
 
                 val navController = rememberNavController()
                 val username = intent.getStringExtra("USERNAME")
+                val receiverId = intent.getStringExtra("USER_ID")
 
                 LaunchedEffect(Unit) {
                     val userListener = object : ValueEventListener {
@@ -210,9 +213,11 @@ class ChatDetail : ComponentActivity() {
                                             .clickable {
                                                 val newMessage = Message(
                                                     message,
-                                                    userId.toString(),
                                                     currentDateTime,
-                                                )
+                                                    receiverId.toString(),
+                                                    userId.toString(),
+
+                                                    )
                                                 messRef
                                                     .push()
                                                     .setValue(newMessage)
@@ -248,7 +253,10 @@ class ChatDetail : ComponentActivity() {
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
-                        ChatContent(messages = messages)
+                        val fitlerData = messages.filter {
+                            it.receiverId == receiverId.toString() && it.senderId == userId.toString()
+                        }
+                        ChatContent(messages = fitlerData)
                     }
                 }
             }
@@ -264,17 +272,52 @@ fun ChatContent(messages: List<Message>) {
             .padding(5.dp), verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(messages) { message ->
-            Card(
-                modifier = Modifier
-                    .width(100.dp)
-                    .wrapContentHeight(), shape = RoundedCornerShape(bottomStart = 10.dp, topStart = 10.dp, topEnd = 10.dp)
-            ) {
-                Text(
-                    text = "${message.message}",
-                    modifier = Modifier
-                        .padding(10.dp)
-                )
+            if (message.senderId == message.senderId) {
+                Column(
+                    modifier = Modifier.padding(top = 50.dp),
+                    horizontalAlignment = AbsoluteAlignment.Left
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .wrapContentHeight(),
+                        shape = RoundedCornerShape(
+                            bottomStart = 10.dp,
+                            topStart = 10.dp,
+                            topEnd = 10.dp
+                        ), colors = CardDefaults.cardColors(Green)
+                    ) {
+                        Text(
+                            text = "${message.message}",
+                            modifier = Modifier
+                                .padding(10.dp)
+                        )
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier.padding(top = 50.dp),
+                    horizontalAlignment = AbsoluteAlignment.Right
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .wrapContentHeight(),
+                        shape = RoundedCornerShape(
+                            bottomStart = 10.dp,
+                            topStart = 10.dp,
+                            topEnd = 10.dp
+                        )
+                    ) {
+                        Text(
+                            text = "${message.message}",
+                            modifier = Modifier
+                                .padding(10.dp)
+                        )
+                    }
+                }
             }
+
 
         }
     }
@@ -283,6 +326,6 @@ fun ChatContent(messages: List<Message>) {
 data class Message(
     val message: String = "",
     val currentTimeOrDate: String = "",
-    val messagSend: String = "",
-    val userId: String? = null
+    val receiverId: String = "",
+    val senderId: String? = "",
 )
