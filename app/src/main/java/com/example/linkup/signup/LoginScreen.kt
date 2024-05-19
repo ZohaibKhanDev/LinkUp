@@ -164,7 +164,7 @@ fun LoginScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.Home.route)
+                navController.navigate(Screen.Chat.route)
                 scope.launch {
                     viewModel.loginUser(
                         AuthUser(

@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.linkup.BottomNavigation.StatusScreen
 import com.example.linkup.signup.AuthScreen
 import com.example.linkup.signup.LoginScreen
@@ -34,11 +33,11 @@ fun Navigation(navController: NavHostController) {
         if (sharedUserId == null) {
             Screen.Main.route
         } else {
-            Screen.Home.route
+            Screen.Chat.route
         }
     }
 
-    NavHost(navController = navController, startDestination = Screen.Main.route) {
+    NavHost(navController = navController, startDestination = destination) {
         composable(Screen.Main.route) {
             AuthScreen(navController)
         }
@@ -50,18 +49,19 @@ fun Navigation(navController: NavHostController) {
         composable(Screen.login.route) {
             LoginScreen(navController)
         }
-        composable(Screen.Home.route) {
+        composable(Screen.Chat.route) {
 
             HomeScreen(navController, sharedUserId)
-      }
+        }
 
-       composable(Screen.Status.route){
-          StatusScreen()
-       }
+        composable(Screen.Status.route) {
+            StatusScreen(navController)
+        }
 
-       composable(Screen.Call.route){
-           CallsScreen()
-       }
+        composable(Screen.Call.route) {
+            CallsScreen(navController)
+        }
+
     }
 }
 
@@ -72,24 +72,33 @@ sealed class Screen(
     val unSelected: ImageVector
 ) {
     object Main :
-        Screen("Main",
-"Main", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
-)
+        Screen(
+            "Main",
+            "Main", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
+        )
 
-    object signup : Screen("signup"
-,"signUp", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
-)
-    object login : Screen("login"
-,"login", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
-)
-object Home : Screen("Home"
-,"Home", selectedIcon = Icons.Default.Chat, unSelected = Icons.Outlined.Chat
-)
-    object Status:Screen("Status"
-,"Status", selectedIcon = Icons.Filled.Upcoming, unSelected = Icons.Outlined.Upcoming
-)
-    object Call:Screen("Call"
-,"Call", selectedIcon = Icons.Filled.Call, unSelected = Icons.Outlined.Call
-)
+    object signup : Screen(
+        "signup", "signUp", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
+    )
+
+    object login : Screen(
+        "login", "login", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
+    )
+
+    object Chat : Screen(
+        "Chat", "Chat", selectedIcon = Icons.Default.Chat, unSelected = Icons.Outlined.Chat
+    )
+
+    object Status : Screen(
+        "Status",
+        "Status",
+        selectedIcon = Icons.Filled.Upcoming,
+        unSelected = Icons.Outlined.Upcoming
+    )
+
+    object Call : Screen(
+        "Call", "Call", selectedIcon = Icons.Filled.Call, unSelected = Icons.Outlined.Call
+    )
+
 
 }

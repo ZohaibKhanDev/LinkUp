@@ -16,11 +16,6 @@
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
         <activity
-            android:name=".data.ChatActivity"
-            android:exported="false"
-            android:label="@string/title_activity_chat"
-            android:theme="@style/Theme.LinkUp" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -31,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".chatdetail.ChatDetail"/>
     </application>
 
 </manifest>

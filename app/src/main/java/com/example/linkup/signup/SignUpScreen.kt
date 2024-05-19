@@ -204,7 +204,7 @@ fun SignUpScreen(navController: NavController) {
         Button(
             onClick = {
 
-                navController.navigate(Screen.Home.route)
+                navController.navigate(Screen.Chat.route)
                 val user = com.example.linkup.User(null, name, email, password, "male", "pk")
                 viewModel.storeData(user, userId)
                 val sharedPreferences = context.getSharedPreferences("Linkup",Context.MODE_PRIVATE)

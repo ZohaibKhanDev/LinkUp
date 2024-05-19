@@ -40,8 +40,8 @@ fun AuthScreen(navController: NavController) {
 
     LaunchedEffect(key1 = Unit) {
         if (sharedUserId != null) {
-            navController.navigate(Screen.Home.route) {
-                popUpTo(Screen.Home.route) { inclusive = true }
+            navController.navigate(Screen.Chat.route) {
+                popUpTo(Screen.Chat.route) { inclusive = true }
             }
         }
     }
