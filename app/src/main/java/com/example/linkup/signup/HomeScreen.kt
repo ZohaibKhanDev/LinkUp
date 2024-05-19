@@ -59,60 +59,63 @@ fun HomeScreen(navController: NavController, sharedUserId: String?) {
             }
 
             override fun onCancelled(error: DatabaseError) {
+
             }
         }
         dbRef.addValueEventListener(userListener)
     }
 
     val filteredUsers = users.filter {
-        it.usernames?.contains(search, ignoreCase = true)!!
+        it.usernames?.contains(search, ignoreCase = true) == true
     }
 
     Scaffold(topBar = {
-        LargeTopAppBar(title = {
-            TextField(
-                value = search,
-                onValueChange = { search = it },
-                placeholder = { Text(text = "Search") },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = ""
+        LargeTopAppBar(
+            title = {
+                TextField(
+                    value = search,
+                    onValueChange = { search = it },
+                    placeholder = { Text(text = "Search") },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = ""
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(14.dp)
+                        .height(52.dp)
+                        .width(350.dp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(40.dp),
+                    textStyle = TextStyle(
+                        fontSize = 13.sp
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
                     )
-                },
-                modifier = Modifier
-                    .padding(14.dp)
-                    .height(52.dp)
-                    .width(350.dp),
-                singleLine = true,
-                shape = RoundedCornerShape(40.dp),
-                textStyle = TextStyle(
-                    fontSize = 13.sp
-                ),
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
                 )
-            )
-        }, navigationIcon = {
-            Text(text = "Link Up", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
-        })
+            },
+            navigationIcon = {
+                Text(text = "Link Up", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            }
+        )
     }) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = it.calculateTopPadding(), start = 10.dp, end = 10.dp)
         ) {
-            items(filteredUsers) { user ->
+            items(users) { user ->
                 UserCard(user, navController)
             }
         }
     }
 }
-
 @Composable
 fun UserCard(user: User, navController: NavController) {
-    val context= LocalContext.current
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,7 +161,7 @@ fun UserCard(user: User, navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = user.usernames.toString(),
+                        text = user.usernames ?: "",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.W400
                     )
@@ -183,6 +186,7 @@ fun UserCard(user: User, navController: NavController) {
         }
     }
 }
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
