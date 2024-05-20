@@ -4,17 +4,44 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +59,12 @@ import com.example.linkup.User
 import com.example.linkup.chatdetail.ChatDetail
 import com.example.linkup.navigation.Navigation
 import com.example.linkup.navigation.Screen
-import com.google.firebase.database.*
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +72,7 @@ import com.google.firebase.database.*
 @Composable
 fun HomeScreen(navController: NavController, sharedUserId: String?) {
 
+    val userId = Firebase.auth.currentUser?.uid ?: ""
     var search by remember { mutableStateOf("") }
     var users by remember { mutableStateOf(listOf<User>()) }
 
@@ -68,7 +101,10 @@ fun HomeScreen(navController: NavController, sharedUserId: String?) {
     val filteredUsers = users.filter {
         it.usernames?.contains(search, ignoreCase = true) == true
     }
-
+    var drop by remember {
+        mutableStateOf(false)
+    }
+val context= LocalContext.current
     Scaffold(topBar = {
         LargeTopAppBar(
             title = {
@@ -99,13 +135,32 @@ fun HomeScreen(navController: NavController, sharedUserId: String?) {
             },
             navigationIcon = {
                 Text(text = "Link Up", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            }, actions = {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "",
+                    modifier = Modifier.clickable { drop = !drop })
+
+                DropdownMenu(expanded = drop == true, onDismissRequest = { drop =!drop }) {
+                    DropdownMenuItem(text = { Text(text = "Setting") }, onClick = { })
+                    DropdownMenuItem(text = { Text(text = "Messages") }, onClick = { })
+                    DropdownMenuItem(text = { Text(text = "Log Out") }, onClick = {
+                        Firebase.auth.signOut()
+                       navController.navigate(Screen.signup.route)
+                    })
+                }
             }
         )
     }) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = it.calculateTopPadding(), start = 10.dp, end = 10.dp)
+                .padding(
+                    top = it.calculateTopPadding(),
+                    start = 10.dp,
+                    end = 10.dp,
+                    bottom = it.calculateBottomPadding()
+                )
         ) {
             items(filteredUsers) { user ->
                 UserCard(user, navController)
@@ -113,8 +168,9 @@ fun HomeScreen(navController: NavController, sharedUserId: String?) {
         }
     }
 }
+
 @Composable
-fun UserCard(user: User, navController: NavController) {
+fun UserCard(user: User, navController: NavController, ) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
@@ -174,7 +230,7 @@ fun UserCard(user: User, navController: NavController) {
                         .padding(start = 5.dp, end = 5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Ok", fontSize = 14.sp)
+                    Text(text = "ok", fontSize = 14.sp)
                     Icon(
                         imageVector = Icons.Default.DoneAll,
                         contentDescription = "",

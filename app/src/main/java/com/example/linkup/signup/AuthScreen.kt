@@ -45,7 +45,6 @@ fun AuthScreen(navController: NavController) {
             }
         }
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

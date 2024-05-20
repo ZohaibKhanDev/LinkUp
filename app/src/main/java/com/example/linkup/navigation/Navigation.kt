@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.linkup.BottomNavigation.StatusScreen
 import com.example.linkup.signup.AuthScreen
 import com.example.linkup.signup.LoginScreen
@@ -37,7 +39,7 @@ fun Navigation(navController: NavHostController) {
         }
     }
 
-    NavHost(navController = navController, startDestination =destination) {
+    NavHost(navController = navController, startDestination = destination) {
         composable(Screen.Main.route) {
             AuthScreen(navController)
         }
@@ -71,11 +73,9 @@ sealed class Screen(
     val selectedIcon: ImageVector,
     val unSelected: ImageVector
 ) {
-    object Main :
-        Screen(
-            "Main",
-            "Main", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
-        )
+    object Main : Screen(
+        "Main", "Main", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
+    )
 
     object signup : Screen(
         "signup", "signUp", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star

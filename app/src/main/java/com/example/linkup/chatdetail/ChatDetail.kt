@@ -266,6 +266,7 @@ class ChatDetail : ComponentActivity() {
 
 @Composable
 fun ChatContent(messages: List<Message>) {
+    val navController= rememberNavController()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -291,6 +292,7 @@ fun ChatContent(messages: List<Message>) {
                             text = "${message.message}",
                             modifier = Modifier
                                 .padding(10.dp)
+
                         )
                     }
                 }

@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.linkup.User
 import com.example.linkup.chatdetail.ChatContent
 import com.example.linkup.data.remote.MainViewModel
 import com.example.linkup.data.remote.Repository
@@ -205,42 +206,43 @@ fun SignUpScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.Chat.route)
-                val user = com.example.linkup.User(userId, name, email, password, "male", "pk")
-                viewModel.storeData(user, userId)
-                val sharedPreferences = context.getSharedPreferences("Linkup",Context.MODE_PRIVATE)
-                sharedPreferences.edit().putString("userId",userId).apply()
-                println("SHARED ${Firebase.auth.currentUser}")
-                scope.launch {
-                    viewModel1.createUser(
-                        AuthUser(
-                            email, password
-                        )
-                    ).collect {
-                        when (it) {
-                            is ResultState.Error -> {
-                                Toast.makeText(context, "${it.error}", Toast.LENGTH_SHORT).show()
-                                isDialog = false
-                            }
+                val user = User(userId, name, email, password, "male", "pk")
+                dbRef.child(userId).setValue(user).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
+                        sharedPreferences.edit().putString("userId", userId).apply()
 
-                            ResultState.Loading -> {
-                                isDialog = true
-                            }
-
-                            is ResultState.Success -> {
-                                Toast.makeText(context, "${it.response}", Toast.LENGTH_SHORT).show()
-                                isDialog = false
-
+                        scope.launch {
+                            viewModel1.createUser(AuthUser(email, password)).collect {
+                                when (it) {
+                                    is ResultState.Error -> {
+                                        Toast.makeText(context, "${it.error}", Toast.LENGTH_SHORT).show()
+                                        isDialog = false
+                                    }
+                                    ResultState.Loading -> {
+                                        isDialog = true
+                                    }
+                                    is ResultState.Success -> {
+                                        Toast.makeText(context, "${it.response}", Toast.LENGTH_SHORT).show()
+                                        isDialog = false
+                                        navController.navigate(Screen.login.route)
+                                    }
+                                }
                             }
                         }
+                    } else {
+                        Toast.makeText(context, "Error storing user: ${task.exception}", Toast.LENGTH_SHORT).show()
                     }
                 }
-            }, modifier = Modifier
+            },
+            modifier = Modifier
                 .width(273.dp)
-                .height(50.dp), shape = RoundedCornerShape(5.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(5.dp)
         ) {
             Text(text = "Sign Up")
         }
+
     }
 
 

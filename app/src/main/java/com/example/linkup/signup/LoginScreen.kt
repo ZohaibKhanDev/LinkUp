@@ -1,5 +1,6 @@
 package com.example.linkup.signup
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -164,7 +165,6 @@ fun LoginScreen(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate(Screen.Chat.route)
                 scope.launch {
                     viewModel.loginUser(
                         AuthUser(
@@ -184,7 +184,8 @@ fun LoginScreen(navController: NavController) {
                             is ResultState.Success -> {
                                 Toast.makeText(context, "${it.response}", Toast.LENGTH_SHORT).show()
                                 isDialog = false
-
+                                navController.navigate(Screen.Chat.route)
+                                (context as Activity).finishAffinity()
                             }
                         }
                     }
