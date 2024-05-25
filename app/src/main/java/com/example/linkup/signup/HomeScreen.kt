@@ -160,9 +160,6 @@ fun HomeScreen(navController: NavController) {
                         editor.clear()
                         editor.apply()
 
-                        val name = sharedPreferences.getString("name", "$sharedUserName")
-                        val userId = sharedPreferences.getString("userId", "$sharedUserId")
-
                         navController.navigate(Screen.login.route) {
                             popUpTo(navController.graph.startDestinationId) {
                                 inclusive = true

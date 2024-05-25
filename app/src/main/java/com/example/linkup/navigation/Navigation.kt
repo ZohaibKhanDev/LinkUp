@@ -16,10 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.linkup.BottomNavigation.StatusScreen
 import com.example.linkup.signup.AuthScreen
 import com.example.linkup.signup.LoginScreen
@@ -51,20 +49,9 @@ fun Navigation(navController: NavHostController) {
         }
 
         composable(
-            Screen.login.route/* + "/{name}/{id}",
-            arguments = listOf(
-                navArgument("name") {
-                    type = NavType.StringType
-                },
-                navArgument("id") {
-                    type = NavType.StringType
-                },
-
-                )*/
+            Screen.login.route
         ) {
-      /*      val name = it.arguments?.getString("name")
-            val id = it.arguments?.getString("id")*/
-            LoginScreen(navController)
+            LoginScreen(navController,sharedUserName,sharedUserId)
         }
 
 

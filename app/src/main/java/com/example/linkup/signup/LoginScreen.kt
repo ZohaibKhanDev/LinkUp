@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController, sharedUserName: String?, sharedUserId: String?) {
     val viewModel: AuthViewModel = koinInject()
 
 
@@ -166,9 +166,9 @@ fun LoginScreen(navController: NavController) {
         Button(
             onClick = {
                 scope.launch {
-                   /* val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
-                    sharedPreferences.edit().putString("userId", id).apply()
-                    sharedPreferences.edit().putString("name", name).apply()*/
+                /*    val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
+                    sharedPreferences.edit().putString("userId", sharedUserId).apply()
+                    sharedPreferences.edit().putString("name", sharedUserName).apply()*/
                     viewModel.loginUser(
                         AuthUser(
                             email, password
