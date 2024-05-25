@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class AuthRepositoryImpl(private val authdb: FirebaseAuth) : AuthRepository {
+
     override fun createUser(authUser: AuthUser): Flow<ResultState<String>> = callbackFlow {
         trySend(ResultState.Loading)
         authdb.createUserWithEmailAndPassword(authUser.email, authUser.password)
@@ -35,4 +36,16 @@ class AuthRepositoryImpl(private val authdb: FirebaseAuth) : AuthRepository {
             }
         awaitClose { close() }
     }
+
+    override fun logoutUser(): Flow<ResultState<String>> = callbackFlow {
+        trySend(ResultState.Loading)
+        try {
+            authdb.signOut()
+            trySend(ResultState.Success("Logout Successfully"))
+        } catch (e: Exception) {
+            trySend(ResultState.Error(e))
+        }
+        awaitClose { close() }
+    }
 }
+

@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "LinkUp"
 include(":app")
+include(":demo-firebase")

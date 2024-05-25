@@ -1,60 +1,62 @@
 package com.example.linkup.data.remote
 
+import com.example.linkup.chatdetail.Message
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+
+
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.linkup.User
-import com.example.linkup.chatdetail.Message
-import com.example.linkup.signup.ResultState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val repository: Repository) : ViewModel() {
-    val _writeUser = MutableStateFlow<ResultState<String>>(ResultState.Loading)
+class MainViewModel(private val repository: Repository1) : ViewModel() {
+    private val _messages = MutableStateFlow<List<Message>>(emptyList())
+    val messages: StateFlow<List<Message>> get() = _messages
 
-    val writeUser: StateFlow<ResultState<String>> = _writeUser.asStateFlow()
-
-    val _getData=MutableStateFlow<ResultState<User?>>(ResultState.Loading)
-    val getData:StateFlow<ResultState<User?>> = _getData.asStateFlow()
-
-    val _writeMessage=MutableStateFlow<ResultState<String>>(ResultState.Loading)
-
-    val writeMessage:StateFlow<ResultState<String>> = _writeMessage.asStateFlow()
-
-    fun storedMessage(message: Message,userId: String){
-        _writeMessage.value=ResultState.Loading
+    init {
         viewModelScope.launch {
-            try {
-                val response=repository.writeUserMessage(message,userId)
-                _writeMessage.value=ResultState.Success(response)
-            }catch (e:Exception){
-                _writeMessage.value=ResultState.Error(e)
+            repository.getMessages().collect {
+                Log.d("MainViewModel", "Messages retrieved: $it")
+                _messages.value = it
             }
         }
     }
 
-    fun getData(user: String){
+    fun addMessage(message: Message) {
         viewModelScope.launch {
-            _getData.value=ResultState.Loading
-            try {
-                val response=repository.getUserData(user)
-                _getData.value= ResultState.Success(response)
-            }catch (e:Exception){
-                _getData.value=ResultState.Error(e)
-            }
+            repository.addMessage(message)
         }
     }
+}
 
-    fun storeData(user: User, userId: String) {
-        _writeUser.value=ResultState.Loading
-        viewModelScope.launch {
-            try {
-                val response = repository.writeUserData(user,userId)
-                _writeUser.value = ResultState.Success(response)
-            } catch (e: Exception) {
-                _writeUser.value = ResultState.Error(e)
+
+class Repository1(private val databaseReference: DatabaseReference) {
+
+    fun getMessages(): Flow<List<Message>> = callbackFlow {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val messages = snapshot.children.mapNotNull { it.getValue<Message>() }
+                trySend(messages)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
             }
         }
+        databaseReference.addValueEventListener(listener)
+        awaitClose { databaseReference.removeEventListener(listener) }
+    }
+
+    suspend fun addMessage(message: Message) {
+        databaseReference.push().setValue(message)
     }
 }

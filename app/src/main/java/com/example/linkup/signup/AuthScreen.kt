@@ -37,7 +37,7 @@ fun AuthScreen(navController: NavController) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
     val sharedUserId = sharedPreferences.getString("userId", null)
-
+    val sharedUserName = sharedPreferences.getString("name", null)
     LaunchedEffect(key1 = Unit) {
         if (sharedUserId != null) {
             navController.navigate(Screen.Chat.route) {
@@ -84,7 +84,7 @@ fun AuthScreen(navController: NavController) {
 
         OutlinedButton(
             onClick = {
-                navController.navigate(Screen.login.route)
+                navController.navigate(Screen.login.route )
             },
             modifier = Modifier
                 .width(273.dp)

@@ -31,8 +31,10 @@ fun Navigation(navController: NavHostController) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
     val sharedUserId = sharedPreferences.getString("userId", null)
+    val sharedUserName = sharedPreferences.getString("name", null)
+
     val destination = remember {
-        if (sharedUserId == null) {
+        if (sharedUserId == null ) {
             Screen.Main.route
         } else {
             Screen.Chat.route
@@ -48,12 +50,27 @@ fun Navigation(navController: NavHostController) {
             SignUpScreen(navController)
         }
 
-        composable(Screen.login.route) {
+        composable(
+            Screen.login.route/* + "/{name}/{id}",
+            arguments = listOf(
+                navArgument("name") {
+                    type = NavType.StringType
+                },
+                navArgument("id") {
+                    type = NavType.StringType
+                },
+
+                )*/
+        ) {
+      /*      val name = it.arguments?.getString("name")
+            val id = it.arguments?.getString("id")*/
             LoginScreen(navController)
         }
+
+
         composable(Screen.Chat.route) {
 
-            HomeScreen(navController, sharedUserId)
+            HomeScreen(navController)
         }
 
         composable(Screen.Status.route) {
@@ -85,6 +102,10 @@ sealed class Screen(
         "login", "login", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
     )
 
+    object login1 : Screen(
+        "login", "login", selectedIcon = Icons.Default.Star, unSelected = Icons.Default.Star
+    )
+
     object Chat : Screen(
         "Chat", "Chat", selectedIcon = Icons.Default.Chat, unSelected = Icons.Outlined.Chat
     )
@@ -102,3 +123,5 @@ sealed class Screen(
 
 
 }
+
+

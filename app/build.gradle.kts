@@ -93,7 +93,4 @@ dependencies {
     implementation("io.getstream:stream-chat-android-offline:6.0.8")
 
     implementation("androidx.compose.material:material-icons-extended:1.6.0-alpha08")
-
-
-
 }

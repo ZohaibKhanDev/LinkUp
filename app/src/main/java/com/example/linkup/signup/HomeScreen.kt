@@ -1,4 +1,7 @@
+@file:Suppress("NAME_SHADOWING")
+
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -70,7 +73,11 @@ import com.google.firebase.database.ValueEventListener
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController, sharedUserId: String?) {
+fun HomeScreen(navController: NavController) {
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
+    var sharedUserName = sharedPreferences.getString("name", null)
+    var sharedUserId = sharedPreferences.getString("userId", null)
 
     val userId = Firebase.auth.currentUser?.uid ?: ""
     var search by remember { mutableStateOf("") }
@@ -104,7 +111,7 @@ fun HomeScreen(navController: NavController, sharedUserId: String?) {
     var drop by remember {
         mutableStateOf(false)
     }
-val context= LocalContext.current
+
     Scaffold(topBar = {
         LargeTopAppBar(
             title = {
@@ -134,20 +141,38 @@ val context= LocalContext.current
                 )
             },
             navigationIcon = {
-                Text(text = "Link Up", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = "$sharedUserName", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
             }, actions = {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "",
                     modifier = Modifier.clickable { drop = !drop })
 
-                DropdownMenu(expanded = drop == true, onDismissRequest = { drop =!drop }) {
+                DropdownMenu(expanded = drop, onDismissRequest = { drop = false}) {
                     DropdownMenuItem(text = { Text(text = "Setting") }, onClick = { })
                     DropdownMenuItem(text = { Text(text = "Messages") }, onClick = { })
                     DropdownMenuItem(text = { Text(text = "Log Out") }, onClick = {
+
                         Firebase.auth.signOut()
-                       navController.navigate(Screen.signup.route)
+
+                        val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.clear()
+                        editor.apply()
+
+                        val name = sharedPreferences.getString("name", "$sharedUserName")
+                        val userId = sharedPreferences.getString("userId", "$sharedUserId")
+
+                        navController.navigate(Screen.login.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     })
+
+
+
                 }
             }
         )
@@ -170,7 +195,7 @@ val context= LocalContext.current
 }
 
 @Composable
-fun UserCard(user: User, navController: NavController, ) {
+fun UserCard(user: User, navController: NavController) {
     val context = LocalContext.current
     Card(
         modifier = Modifier

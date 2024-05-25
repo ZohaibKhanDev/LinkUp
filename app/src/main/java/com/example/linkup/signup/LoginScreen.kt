@@ -1,6 +1,6 @@
 package com.example.linkup.signup
 
-import android.app.Activity
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -166,6 +166,9 @@ fun LoginScreen(navController: NavController) {
         Button(
             onClick = {
                 scope.launch {
+                   /* val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
+                    sharedPreferences.edit().putString("userId", id).apply()
+                    sharedPreferences.edit().putString("name", name).apply()*/
                     viewModel.loginUser(
                         AuthUser(
                             email, password
@@ -185,7 +188,6 @@ fun LoginScreen(navController: NavController) {
                                 Toast.makeText(context, "${it.response}", Toast.LENGTH_SHORT).show()
                                 isDialog = false
                                 navController.navigate(Screen.Chat.route)
-                                (context as Activity).finishAffinity()
                             }
                         }
                     }

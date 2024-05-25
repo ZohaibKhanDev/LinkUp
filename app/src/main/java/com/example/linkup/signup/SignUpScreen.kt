@@ -43,9 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.linkup.User
-import com.example.linkup.chatdetail.ChatContent
 import com.example.linkup.data.remote.MainViewModel
-import com.example.linkup.data.remote.Repository
+import com.example.linkup.data.remote.Repository1
 import com.example.linkup.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -58,14 +57,12 @@ fun SignUpScreen(navController: NavController) {
     val viewModel1: AuthViewModel = koinInject()
     val dbRef = Firebase.database.getReference("Users")
     val repository = remember {
-        Repository(dbRef)
+        Repository1(dbRef)
     }
     val viewModel = remember {
         MainViewModel(repository)
     }
     val userId = Firebase.auth.currentUser?.uid ?: ""
-
-    println("CURRENT:$userId")
 
     var name by remember {
         mutableStateOf("")
@@ -207,11 +204,15 @@ fun SignUpScreen(navController: NavController) {
         Button(
             onClick = {
                 val user = User(userId, name, email, password, "male", "pk")
+
                 dbRef.child(userId).setValue(user).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val sharedPreferences = context.getSharedPreferences("Linkup", Context.MODE_PRIVATE)
                         sharedPreferences.edit().putString("userId", userId).apply()
+                        sharedPreferences.edit().putString("name", name).apply()
 
+
+                        Toast.makeText(context, "$name:Sign Up SuccessFully", Toast.LENGTH_SHORT).show()
                         scope.launch {
                             viewModel1.createUser(AuthUser(email, password)).collect {
                                 when (it) {
